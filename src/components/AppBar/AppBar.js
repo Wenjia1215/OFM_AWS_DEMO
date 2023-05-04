@@ -26,7 +26,7 @@ export default () => {
         <TopNavigation
             identity={{
                 href: "#",
-                title: "Online Document Manager",
+                title: "Wenjia's Online Document Manager",
             }}
             utilities={[
                 {
