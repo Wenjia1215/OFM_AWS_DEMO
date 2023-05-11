@@ -1,52 +1,64 @@
+import { PDFDocument } from 'pdf-lib';
+// import sharp from 'sharp-browser';
 import React from 'react';
 import UploadFileCard from '../UploadFileCard/UploadFileCard.js';
 
-// Define a higher-order component that will act as an interceptor
-function withTransparentShaping(WrappedComponent) {
-  return class TransparentShapingWrapper extends React.Component {
-    // Intercept the onChange event and apply additional behavior
-    async onChangeInterceptor(e) {
-      // Perform any pre-processing or security checks before calling the original onChange
-      const file = e.target.files[0];
-      const allowedFileTypes = ["image/png", "image/jpeg", "application/pdf"]; // define allowed file types
-      const maxFileSize = 1024 * 1024 * 2; // define max file size to 2MB
+async function sanitizeFile(file) {
+  // Read file as buffer
+  const fileBuffer = await file.arrayBuffer();
 
-      if (!allowedFileTypes.includes(file.type)) {
-        console.error("File type not allowed");
-        return;
-      }
+  if (file.type === 'application/pdf') {
+    // Sanitize PDF
+    const pdfDoc = await PDFDocument.load(fileBuffer);
+    const sanitizedPdfBuffer = await PDFDocument.PDFDocumentWriter.saveToBytes(pdfDoc);
+    return new File([sanitizedPdfBuffer], file.name, { type: 'application/pdf' });
+  }
 
-      if (file.size > maxFileSize) {
-        console.error("File size too large");
-        return;
-      }
+  // if (['image/jpeg', 'image/png'].includes(file.type)) {
+  //   // Sanitize JPG or PNG
+  //   const sanitizedImageBuffer = await sharp(fileBuffer).toBuffer();
+  //   return new File([sanitizedImageBuffer], file.name, { type: file.type });
+  // }
 
-      // Call the original onChange method
-      await this.wrappedComponent.onChange(e);
-
-      // Perform any post-processing or adaptations after the original onChange
-      // Here we sanitize the filename (as an example)
-      const filename = file.name;
-      const sanitizedFilename = filename.replace(/[^\w.-]/g, '_'); // replace special characters with underscore
-      console.log("Sanitized filename:", sanitizedFilename);
-    }
-
-    render() {
-      const {props} = this;
-
-      // Pass down the intercepted onChange event
-      return (
-        <WrappedComponent
-          {...props}
-          ref={(component) => (this.wrappedComponent = component)}
-          onChange={this.onChangeInterceptor.bind(this)}
-        />
-      );
-    }
-  };
+  // If file format is not supported, return original file
+  return file;
 }
 
-// Wrap the UploadFileCard component with the interceptor
-const EnhancedUploadFileCard = withTransparentShaping(UploadFileCard);
+
+const transparentShapingWrapper = (WrappedComponent) => {
+  return (props) => {
+    const enhancedOnChange = async (e) => {
+      // Pre-processing
+      const file = e.target.files[0];
+
+      // Check file size (<= 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        console.log('File size should be less than or equal to 2MB');
+        return;
+      }
+
+      // Check file format (PDF, JPG, PNG)
+      const acceptedFormats = ['application/pdf', 'image/jpeg', 'image/png'];
+      if (!acceptedFormats.includes(file.type)) {
+        console.log('File format should be PDF, JPG or PNG');
+        return;
+      }
+
+      // Call original onChange with the file
+      await props.onChange(e);
+
+      // Post-processing
+      const sanitizedFile = sanitizeFile(file);
+
+      // Update the file in the event
+      e.target.files[0] = sanitizedFile;
+    };
+
+    return <WrappedComponent {...props} onChange={enhancedOnChange} />;
+  };
+};
+
+// Use the transparentShapingWrapper to enhance the UploadFileCard component
+const EnhancedUploadFileCard = transparentShapingWrapper(UploadFileCard);
 
 export default EnhancedUploadFileCard;
