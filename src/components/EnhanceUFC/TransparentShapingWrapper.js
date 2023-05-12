@@ -4,6 +4,7 @@ import React from 'react';
 import UploadFileCard from '../UploadFileCard/UploadFileCard.js';
 
 async function sanitizeFile(file) {
+  console.log('new release')
   // Read file as buffer
   const fileBuffer = await file.arrayBuffer();
 
