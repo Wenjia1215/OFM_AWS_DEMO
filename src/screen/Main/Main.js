@@ -19,7 +19,7 @@ export default function Main(props) {
                 title={props.level == 'private' ? "My private files" : "All public files"}
             >
                 <SpaceBetween size="l">
-                    <TransparentShapingWrapper level={props.level}/>
+                    <TransparentShapingWrapper level={props.level} onChange={() => {}}/>
                     <TableListFiles level={props.level}/>
                 </SpaceBetween>
             </FilesAppLayout>
