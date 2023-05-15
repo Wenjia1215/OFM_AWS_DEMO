@@ -4,7 +4,7 @@ import React from 'react';
 import UploadFileCard from '../UploadFileCard/UploadFileCard.js';
 
 async function sanitizeFile(file) {
-  console.log('new release')
+  
   // Read file as buffer
   const fileBuffer = await file.arrayBuffer();
 
@@ -29,6 +29,7 @@ async function sanitizeFile(file) {
 const transparentShapingWrapper = (WrappedComponent) => {
   return (props) => {
     const enhancedOnChange = async (e) => {
+      console.log('new release 1')
       // Pre-processing
       const file = e.target.files[0];
 

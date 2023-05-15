@@ -17,6 +17,7 @@ import {Predictions, AmazonAIPredictionsProvider} from '@aws-amplify/predictions
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
 function UploadFileCard(props) {
+    console.log('new release 2')
 
     const [filename, setFilename] = useState();
     const [progress, setProgress] = useState();
