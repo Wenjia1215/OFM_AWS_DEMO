@@ -31,10 +31,13 @@ function UploadFileCard(props) {
 
 
     async function onChange(e) {
+        if (props.onChange) {
+            await props.onChange(e);
+        }
+        
         setProgress(0);
         const file = e.target.files[0];
         setFilename(file.name);
-
         try {
             var response = await Storage.put(file.name, file, {
                 progressCallback(progress) {
