@@ -1,10 +1,8 @@
+import React, { useState } from 'react';
 import { PDFDocument } from 'pdf-lib';
-// import sharp from 'sharp-browser';
-import React from 'react';
 import UploadFileCard from '../UploadFileCard/UploadFileCard.js';
 
 async function sanitizeFile(file) {
-  
   // Read file as buffer
   const fileBuffer = await file.arrayBuffer();
 
@@ -15,52 +13,44 @@ async function sanitizeFile(file) {
     return new File([sanitizedPdfBuffer], file.name, { type: 'application/pdf' });
   }
 
-  // if (['image/jpeg', 'image/png'].includes(file.type)) {
-  //   // Sanitize JPG or PNG
-  //   const sanitizedImageBuffer = await sharp(fileBuffer).toBuffer();
-  //   return new File([sanitizedImageBuffer], file.name, { type: file.type });
-  // }
-
   // If file format is not supported, return original file
+  console.log('File format is not supported');
   return file;
 }
 
+const TransparentShapingWrapper = (props) => {
+  const [file, setFile] = useState(null);
+  
+  const enhancedOnChange = async (e) => {
+    console.log('new release 1')
+    // Pre-processing
+    const originalFile = e.target.files[0];
 
-const transparentShapingWrapper = (WrappedComponent) => {
-  return (props) => {
-    const enhancedOnChange = async (e) => {
-      console.log('new release 1')
-      // Pre-processing
-      const file = e.target.files[0];
+    // Check file size (<= 2MB)
+    if (originalFile.size > 2 * 1024 * 1024) {
+      console.log('File size should be less than or equal to 2MB');
+      return;
+    }
 
-      // Check file size (<= 2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        console.log('File size should be less than or equal to 2MB');
-        return;
-      }
+    // Check file format (PDF, JPG, PNG)
+    const acceptedFormats = ['application/pdf', 'image/jpeg', 'image/png'];
+    if (!acceptedFormats.includes(originalFile.type)) {
+      console.log('File format should be PDF, JPG or PNG');
+      return;
+    }
 
-      // Check file format (PDF, JPG, PNG)
-      const acceptedFormats = ['application/pdf', 'image/jpeg', 'image/png'];
-      if (!acceptedFormats.includes(file.type)) {
-        console.log('File format should be PDF, JPG or PNG');
-        return;
-      }
-
-      // Call original onChange with the file
-      await props.onChange(e);
-
-      // Post-processing
-      const sanitizedFile = sanitizeFile(file);
-
-      // Update the file in the event
-      e.target.files[0] = sanitizedFile;
-    };
-
-    return <WrappedComponent {...props} onChange={enhancedOnChange} />;
+    // Sanitize the file
+    const sanitizedFile = await sanitizeFile(originalFile);
+    
+    // Set the sanitized file in state
+    setFile(sanitizedFile);
   };
+
+  // Use the sanitized file in your application
+  // Here I'm just passing it to the original UploadFileCard component as a prop, but you could do anything you need with it
+  return <UploadFileCard {...props} file={file} onChange={enhancedOnChange} />;
 };
 
 // Use the transparentShapingWrapper to enhance the UploadFileCard component
 const TransparentShapingWrapper = transparentShapingWrapper(UploadFileCard);
-
 export default TransparentShapingWrapper;
