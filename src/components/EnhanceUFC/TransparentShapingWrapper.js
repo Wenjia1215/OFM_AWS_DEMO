@@ -52,5 +52,5 @@ const TransparentShapingWrapper = (props) => {
 };
 
 // Use the transparentShapingWrapper to enhance the UploadFileCard component
-const TransparentShapingWrapper = transparentShapingWrapper(UploadFileCard);
+
 export default TransparentShapingWrapper;
