@@ -14,7 +14,7 @@ async function sanitizeFile(file) {
   }
 
   // If file format is not supported, return original file
-  console.log('File format is not supported');
+  console.log('File format is pdf, no need to sanitize');
   return file;
 }
 
@@ -28,13 +28,15 @@ const TransparentShapingWrapper = (props) => {
 
     // Check file size (<= 2MB)
     if (originalFile.size > 2 * 1024 * 1024) {
+      alert('File size should be less than or equal to 2MB');
       console.log('File size should be less than or equal to 2MB');
       return;
     }
 
     // Check file format (PDF, JPG, PNG)
     const acceptedFormats = ['application/pdf', 'image/jpeg', 'image/png'];
-    if (!acceptedFormats.includes(originalFile.type)) {
+    if (!acceptedFormats.includes(originalFile.type)) {      
+      alert('File format should be PDF, JPG or PNG');
       console.log('File format should be PDF, JPG or PNG');
       return;
     }
