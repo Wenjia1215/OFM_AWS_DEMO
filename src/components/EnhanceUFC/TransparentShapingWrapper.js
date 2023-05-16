@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import UploadFileCard from '../UploadFileCard/UploadFileCard.js';
 
@@ -17,9 +17,12 @@ async function sanitizeFile(file) {
   console.log('File format is pdf, no need to sanitize');
   return file;
 }
+
 const TransparentShapingWrapper = (props) => {
+  const inputRef = useRef(null);
+
   const enhancedOnChange = async (e) => {
-    console.log('new release 1')
+    console.log('TransparentShapingWrapper log')
     // Pre-processing
     const originalFile = e.target.files[0];
 
@@ -27,6 +30,9 @@ const TransparentShapingWrapper = (props) => {
     if (originalFile.size > 2 * 1024 * 1024) {
       alert('File size should be less than or equal to 2MB');
       console.log('File size should be less than or equal to 2MB');
+      if (inputRef.current) {
+        inputRef.current.value = '';
+      }
       return;
     }
 
@@ -35,6 +41,9 @@ const TransparentShapingWrapper = (props) => {
     if (!acceptedFormats.includes(originalFile.type)) {      
       alert('File format should be PDF, JPG or PNG');
       console.log('File format should be PDF, JPG or PNG');
+      if (inputRef.current) {
+        inputRef.current.value = '';
+      }
       return;
     }
 
@@ -52,7 +61,7 @@ const TransparentShapingWrapper = (props) => {
   };
 
   // Pass the enhanced onChange handler to the original component
-  return <UploadFileCard {...props} onChange={enhancedOnChange} />;
+  return <UploadFileCard {...props} onChange={enhancedOnChange} inputRef={inputRef}/>;
 };
 
 export default TransparentShapingWrapper;

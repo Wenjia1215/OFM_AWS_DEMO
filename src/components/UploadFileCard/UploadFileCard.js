@@ -17,7 +17,7 @@ import {Predictions, AmazonAIPredictionsProvider} from '@aws-amplify/predictions
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
 function UploadFileCard(props) {
-    console.log('new release 2')
+    console.log('UploadFileCard function log')
 
     const [filename, setFilename] = useState();
     const [progress, setProgress] = useState();
@@ -164,7 +164,7 @@ function UploadFileCard(props) {
                 />
 
                 <div>
-                    <input accept="*/*" id="icon-button-file" type="file" onChange={onChange}
+                    <input accept="*/*" id="icon-button-file" type="file" ref={props.inputRef} onChange={onChange}
                            style={{display: "none"}}/>
 
                     <Button>
