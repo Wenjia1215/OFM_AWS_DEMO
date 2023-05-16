@@ -17,10 +17,7 @@ async function sanitizeFile(file) {
   console.log('File format is pdf, no need to sanitize');
   return file;
 }
-
 const TransparentShapingWrapper = (props) => {
-  const [file, setFile] = useState(null);
-  
   const enhancedOnChange = async (e) => {
     console.log('new release 1')
     // Pre-processing
@@ -44,15 +41,18 @@ const TransparentShapingWrapper = (props) => {
     // Sanitize the file
     const sanitizedFile = await sanitizeFile(originalFile);
     
-    // Set the sanitized file in state
-    setFile(sanitizedFile);
+    // Create a new Event to emulate a file selection and set the sanitized file
+    const newEvent = new Event('change', { bubbles: true });
+    newEvent.target = { files: [sanitizedFile], value: sanitizedFile.name };
+    
+    // Pass the new event to the original onChange handler
+    if (props.onChange) {
+      await props.onChange(newEvent);
+    }
   };
 
-  // Use the sanitized file in your application
-  // Here I'm just passing it to the original UploadFileCard component as a prop, but you could do anything you need with it
-  return <UploadFileCard {...props} file={file} onChange={enhancedOnChange} />;
+  // Pass the enhanced onChange handler to the original component
+  return <UploadFileCard {...props} onChange={enhancedOnChange} />;
 };
-
-// Use the transparentShapingWrapper to enhance the UploadFileCard component
 
 export default TransparentShapingWrapper;
