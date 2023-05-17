@@ -1,3 +1,8 @@
+## Record of Wenjia's Experiment of OFM
+### The intersection of Transparent Shaping and Zero Trust applied to AWS existing environments/applications
+#### Enhancing AWS Application Security with Zero Trust and Transparent Shaping: An Online File Manager Case Study
+
+
 ## Online Document Manager - Amplify Demo
 Online Document Manager is a **web storage solution** where authenticated users can store, access, and share files such as documents, photos, videos, etc. from anywhere with an internet connection. It allows you to keep your files organized, backed up, and easily accessible. You can also save files or documents privately or publicly for all authenticated users using a simple user interface (UI). All text documents can also be analyzed to obtain data such as number of words, tables, forms, keywords, objects, entities and analyze the sentiment in general. 
 
