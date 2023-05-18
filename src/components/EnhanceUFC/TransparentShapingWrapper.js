@@ -3,7 +3,7 @@ import { PDFDocument } from 'pdf-lib';
 import UploadFileCard from '../UploadFileCard/UploadFileCard.js';
 
 async function sanitizeFile(file) {
-  console.log('sanitizeFile')
+  // console.log('sanitizeFile')
   // Read file as buffer
   const fileBuffer = await file.arrayBuffer();
 
