@@ -1,6 +1,9 @@
 import React, { useRef } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import UploadFileCard from '../UploadFileCard/UploadFileCard.js';
+import { useState } from 'react';
+
+const [filename, setFilename] = useState(null);
 
 async function sanitizeFile(file) {
   // Read file into memory as an ArrayBuffer.
