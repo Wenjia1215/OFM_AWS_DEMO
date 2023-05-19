@@ -1,9 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import UploadFileCard from '../UploadFileCard/UploadFileCard.js';
-import { useState } from 'react';
-
-const [filename, setFilename] = useState(null);
 
 async function sanitizeFile(file) {
   // Read file into memory as an ArrayBuffer.
@@ -35,7 +32,8 @@ async function sanitizeFile(file) {
 
 const TransparentShapingWrapper = (props) => {
   const inputRef = useRef(null);
-
+  const [filename, setFilename] = useState(null);
+  
   const enhancedOnChange = async (e) => {
     console.log('TransparentShapingWrapper log')
     // Pre-processing
