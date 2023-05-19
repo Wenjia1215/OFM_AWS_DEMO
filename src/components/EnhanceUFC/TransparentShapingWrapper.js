@@ -3,20 +3,31 @@ import { PDFDocument } from 'pdf-lib';
 import UploadFileCard from '../UploadFileCard/UploadFileCard.js';
 
 async function sanitizeFile(file) {
-  console.log('sanitizeFile')
-  // Read file as buffer
+  // Read file into memory as an ArrayBuffer.
   const fileBuffer = await file.arrayBuffer();
 
   if (file.type === 'application/pdf') {
-    // Sanitize PDF
-    const pdfDoc = await PDFDocument.load(fileBuffer);
-    const sanitizedPdfBuffer = await PDFDocument.PDFDocumentWriter.saveToBytes(pdfDoc);
-    return new File([sanitizedPdfBuffer], file.name, { type: 'application/pdf' });
-  }
+    // Load the PDF into a PDFDocument object
+    const originalPdfDoc = await PDFDocument.load(fileBuffer);
 
-  // If file format is not supported, return original file
-  console.log('File format is pdf, no need to sanitize');
-  return file;
+    // Create a new PDFDocument
+    const newPdfDoc = await PDFDocument.create();
+
+    // Get the page indices of the original document
+    const pageIndices = Array.from({ length: originalPdfDoc.getPageCount() }, (_, i) => i);
+
+    // Copy the pages to the new document
+    const copiedPages = await newPdfDoc.copyPages(originalPdfDoc, pageIndices);
+    copiedPages.forEach(page => newPdfDoc.addPage(page));
+
+    // Save the new PDF as a byte array
+    const sanitizedPdfBuffer = await newPdfDoc.save();
+
+    // Create a new File object with the sanitized PDF
+    const sanitizedFile = new File([sanitizedPdfBuffer], file.name, { type: 'application/pdf' });
+
+    return sanitizedFile;
+  }
 }
 
 const TransparentShapingWrapper = (props) => {
@@ -51,14 +62,20 @@ const TransparentShapingWrapper = (props) => {
     // Sanitize the file
     const sanitizedFile = await sanitizeFile(originalFile);
     
-    // Create a new Event to emulate a file selection and set the sanitized file
-    const newEvent = new Event('change', { bubbles: true });
-    newEvent.target = { files: [sanitizedFile], value: sanitizedFile.name };
-    
-    // Pass the new event to the original onChange handler
-    if (props.onChange) {
-      await props.onChange(newEvent);
+    if (sanitizedFile) {
+      // Set file name here (assuming you have a function to do so)
+      setFilename(sanitizedFile.name);
+
+      // Create a new 'change' event with the sanitized file
+      const newEvent = new Event('change', { bubbles: true });
+      newEvent.target = { files: [sanitizedFile], value: sanitizedFile.name };
+
+      // Pass the new event to the original onChange handle
+      if (props.onChange) {
+        await props.onChange(newEvent);
+      }
     }
+    
   };
 
   // Pass the enhanced onChange handler to the original component
