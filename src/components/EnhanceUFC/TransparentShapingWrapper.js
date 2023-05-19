@@ -66,10 +66,15 @@ const TransparentShapingWrapper = (props) => {
     if (sanitizedFile) {
       // Set file name here (assuming you have a function to do so)
       setFilename(sanitizedFile.name);
-
-      // Create a new 'change' event with the sanitized file
-      const newEvent = new Event('change', { bubbles: true });
-      newEvent.target = { files: [sanitizedFile], value: sanitizedFile.name };
+      // Create a new pseudo-event object with the sanitized file
+      const newEvent = {
+        ...e, 
+        target: { 
+          ...e.target, 
+          files: [sanitizedFile], 
+          value: sanitizedFile.name 
+        },
+      };
 
       // Pass the new event to the original onChange handle
       if (props.onChange) {
