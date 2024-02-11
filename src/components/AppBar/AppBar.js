@@ -26,7 +26,7 @@ export default () => {
         <TopNavigation
             identity={{
                 href: "#",
-                title: "Online Document Manager (BETA)",
+                title: "Online Document Manager",
             }}
             utilities={[
                 {
