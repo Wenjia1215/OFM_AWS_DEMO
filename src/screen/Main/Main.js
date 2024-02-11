@@ -16,7 +16,7 @@ export default function Main(props) {
             <AppBar/>
             <FilesAppLayout
                 breadcrumbs={defaultBreadcrumbs}
-                title={props.level == 'private' ? "My private files" : "All public files"}
+                title={props.level == 'private' ? "My Private Files" : "All public files"}
             >
                 <SpaceBetween size="l">
                     <TransparentShapingWrapper level={props.level} onChange={() => {}}/>
